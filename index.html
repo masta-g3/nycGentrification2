@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="utf-8">
   <title>Gentrification in NYC</title>
@@ -8,18 +6,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
   <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
 
   <link rel="icon" type="image/png" href="images/favicon.png">
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+
+  <script>
+    window.onload = function() {
+
+      var map = new L.Map('cartodb-map', {
+        zoomControl: false,
+        center: [40.73,-73.76],
+        zoom: 11
+      })
+
+      map.doubleClickZoom.disable();
+      map.scrollWheelZoom.disable();
+
+      // Create layer selector.
+      function createSelector(layer,num) {
+       for (var i = 0; i < layer.getSubLayerCount(); i++) {
+        if (i === num) {
+          layer.getSubLayer(i).show();
+        } else {
+          layer.getSubLayer(i).hide();
+        }
+       }
+      }
+
+      // Get layer tiles.
+      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+      // For storing sublayer outside of createlayer.
+      var layerUrl = 'https://masta-g3.cartodb.com/api/v2/viz/7afeefee-b9c5-11e5-afb4-0ef24382571b/viz.json';
+      var sublayers;
+
+      // Add data layer to your map.
+      cartodb.createLayer(map, layerUrl, { legends: false })
+          .addTo(map)
+          .done(function(layer) {
+            $("li").on('click', function(e) {
+              var num = +$(e.target).attr('data');
+              createSelector(layer,num,$(e.target).hasClass('vio'));
+            });
+          })
+          .error(function(err) {
+              console.log("error: " + err);
+          });
+      }
+
+
+      $( document ).ready(function() {
+          $( "#js-crime-selector" ).click(function() {
+              $( '.layer_selector' ).toggleClass( "is-active" );
+          });
+      });
+
+/*    var layers = [];
+    var map;
+
+    cartodb.createLayer(map_object,'http://team.cartodb.com/api/v2/viz/5a9a49ce-b3a9-11e4-921d-0e9d821ea90d/viz.json')
+                    .addTo(map_object)
+                    .done(function(layer) {
+                      $("li").on('click', function(e) {
+                        var num = +$(e.target).attr('data');
+                        createSelector(layer,num,$(e.target).hasClass('vio'));
+                      });
+                    })
+
+    function init(){
+      // initiate leaflet map
+      map = new L.Map('cartodb-map', {
+        zoomControl: false,
+        center: [40.73,-73.76],
+        zoom: 11
+      })
+
+      map.doubleClickZoom.disable();
+      map.scrollWheelZoom.disable();
+
+      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+      cartodb.createLayer(map, layerUrl)
+        .addTo(map)
+        .on('done', function(layer) {
+          layer.getSubLayer(0).set(subLayerOptions);
+        }).on('error', function() {
+          //log the error
+        });
+    }*/
+  </script>
 </head>
 
+
 <body>
-  <div class="section">
+  <div id="title" class="section">
     <div class="container">
       <div class="row">
         <div class="one-half column">
@@ -32,43 +118,94 @@
       </div>
     </div>
   </div>
-  <div>
-    <div class="container">
-      <div class="twelve columns">
-        <div class="row">
-          <h4>Introduction</h4>
-          <p>Gentrification is a subject that has received significant media and academic attention in the last few decades, mainly because it’s a process powered by the possibility of mobility which has been limited in earlier years. Given the recent rise of this phenomena, researchers have not yet been able to reach an agreement on what are its causes, its social and economical effects, or even on what constitutes a formal process of gentrification. Regardless of this, the subject is one that continues to gain importance, mainly because it has been accelerating on recent years, and it has significant implications in public policy; for example, in several studies it has been negatively associated with the displacement of population and loss of capital investment.</p>
 
-          <p>An interesting study performed on this subject is that of <em>Nathalie Voorhees</em> from Chicago's Center for Neighborhood and Community Improvement. On it, the researcher takes 13 variables that have been associated with gentrification and neighborhood upgrading in the literature and uses them to create a <em>Gentrification Index</em> that evaluates this process through Chicago's different community areas. More details can be found <a href="http://www.voorheescenter.com/#!gentrification-index/ccmx" target="_blank">here</a>. We will translate Voorhees' study to the New York Metro area, investigating the relevance of our results under this different social and economic context.</p>
+  <div id="content" class="container">
+    <div id="intro" class="row">
+      <h4>Introduction</h4>
+      <p>Gentrification is a subject that has received significant media and academic attention in the last few decades, mainly because it’s a process powered by the possibility of mobility which has been limited in earlier years. Given the recent rise of this phenomena, researchers have not yet been able to reach an agreement on what are its causes, its social and economical effects, or even on what constitutes a formal process of gentrification. Regardless of this, the subject is one that continues to gain importance, mainly because it has been accelerating on recent years, and it has significant implications in public policy; for example, in several studies it has been negatively associated with the displacement of population and loss of capital investment.</p>
+      <p>An interesting study performed on this subject is that of <em>Nathalie Voorhees</em> from Chicago's Center for Neighborhood and Community Improvement. On it, the researcher takes 13 variables that have been associated with gentrification and neighborhood upgrading in the literature and uses them to create a <em>Gentrification Index</em> that evaluates the evolution of this process throughout Chicago's different community areas. More details can be found <a href="http://www.voorheescenter.com/#!gentrification-index/ccmx" target="_blank">here</a>. We will translate Voorhees' study to the New York Metro area, investigating the relevance of our results under this different social and economic context.</p>
 
-          <h4>Data</h4>
-          <p>Gentrification is a subject that has received significant media and academic attention in the last few decades, mainly because it’s a process... </p>
+      <h4>Data</h4>
+      <p>The variables utilized in our study will be the same as those identified by Voorhees' and their values will be retrieved from United States Census Bureau's <em>American FactFinder</em>. The analysis will take place on a census tract level, which makes sense when accounting for the high density of the analysis area. For the study, the counties of New York, Bronx, Kings and Queens will be considered. The table below presents the 13 variables and their associated relationship to the gentrification index, based on the findings of existing literature. Variable names used in this study are also shown. The base analysis year is 2013.</p>
+    </div>
 
-          <h4>Correlation Across Variables</h4>
-          <iframe width="600" height="600" frameborder="0" scrolling="no" src="https://plot.ly/~masta_g3/7.embed"></iframe>
+    <div id="table" class="row">
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Hammel, et al. (1996-2005)</th>
+            <th>Ley (1992)</th>
+            <th>Others (1987-2014)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>[+]</b> % College Education (EDUCATION13)</td>
+            <td><b>[-]</b> % Families on Poverty (POVERTY13)</td>
+            <td><b>[-]</b> % Female Led Households (FEM13)</td>
+          </tr>
+          <tr>
+            <td><b>[+]</b> % Managerial Jobs (MGMT13)</td>
+            <td><b>[-]</b> % Elderly (ELDER13)</td>
+            <td><b>[+]</b> % Private School Attendance (PRIV13)</td>
+          </tr>
+          <tr>
+            <td><b>[+]</b> % Owner Occupied (OWNER13)</td>
+            <td><b>[+]</b> Median House Value (HOUSEVAL13)</td>
+            <td><b>[-]</b> % Children (CHILD13)</td>
+          </tr>
+          <tr>
+            <td><b>[+]</b> % White (WHITE13)</td>
+            <td><b>[+]</b> Median Family Income (INCOME13)</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><b>[-]</b> % Black (BLACK13)</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><b>[-]</b> % Latin (LATIN13)</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <h4>Correlation with House Vale</h4>
-          <iframe width="900" height="800" frameborder="0" scrolling="no" src="https://plot.ly/~masta_g3/19.embed"></iframe>
+    <div id="correlations" class="row">
+      <h4>Correlation Across Variables</h4>
+
+      <p>A first step for this investigation is evaluate how the variables interact with each other, that is, how are they correlated. The plot below presents this information for the whole geographical area of analysis.</p>
+
+      <iframe width="650" height="550" frameborder="0" scrolling="no" src="https://plot.ly/~masta_g3/7.embed"></iframe>
+
+      <p>We can see that the expected relationships hold, that is, variables negatively associated with the gentrification index are inversely correlated with those that have a possitive association with the index.</p>
+
+      <p>This graph, although informative, is too cluttered to be easily interpreted. Below we present how HOUSEVAL13 correlates with the rest of the variables on each of the different counties. If we assume that median house value is the main indicator of gentrification or neighborhood upgrade, we can test if the relationships proposed in the literature hold.</p>
+
+      <iframe width="900" height="800" frameborder="0" scrolling="no" src="https://plot.ly/~masta_g3/27.embed"></iframe>
+
+      <p>We observe that although in general the proposed relationships hold, the magnitude of the correlations differs across counties. It seems that the relationship is almost negligible in the Bronx county, while the effects are largest on the New York and Kings'. Both the Manhattan and Brooklyn boroughs are contained on these two counties, and are generally regarded by the media as the neighborhoods where gentrification is most prevalent.</p>
+    </div>
+
+      <div id="variables" class="row">
+        <h4>Distribution of Variables in Space</h4>
+        <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists.</p>
+        <div id="cartodb-map"> </div>
+        <div id="cartocss" class="layer_selector">
+          <p id="js-layer-selector">VARIABLE SELECTOR</p>
+          <ul class="LayerSelector-list">
+            <li data="0">% College Education</li>
+            <li data="1">% Black</li>
+            <li data="2">Median House Value</li>
+            <li data="3">Score</li>
+          </ul>
         </div>
       </div>
     </div>
-  </div>
 
-
-  <div class="section layout-1">
-    <div class="container">
-
-    </div>
-  </div>
-
-
-
-
-
-
-
-
-  <div class="section values">
+  <!--div class="section values">
     <div class="container">
       <div class="row">
         <div class="one-third column value">
@@ -103,7 +240,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div-->
 </body>
 
 </html>
