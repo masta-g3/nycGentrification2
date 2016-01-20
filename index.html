@@ -5,7 +5,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
@@ -20,15 +20,25 @@
   // First map.
     window.onload = function() {
 
-      var map = new L.Map('cartodb-map', {
+      var map1 = new L.Map('cartodb-map1', {
         zoomControl: false,
         center: [40.73,-73.76],
         zoom: 11
       })
 
-      map.doubleClickZoom.disable();
-      map.scrollWheelZoom.disable();
-      map.dragging.disable();
+      var map2 = new L.Map('cartodb-map2', {
+        zoomControl: false,
+        center: [40.73,-73.76],
+        zoom: 11
+      })
+
+      map1.doubleClickZoom.disable();
+      map1.scrollWheelZoom.disable();
+      map1.dragging.disable();
+
+      map2.doubleClickZoom.disable();
+      map2.scrollWheelZoom.disable();
+      map2.dragging.disable();
 
       // Create layer selector.
       function createSelector(layer,num) {
@@ -42,15 +52,29 @@
       }
 
       // Get layer tiles.
-      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map1);
+      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map2);
 
       // For storing sublayer outside of createlayer.
-      var layerUrl = 'https://masta-g3.cartodb.com/api/v2/viz/9e117f7e-beed-11e5-8311-0ecd1babdde5/viz.json';
+      var layerUrl1 = 'https://masta-g3.cartodb.com/api/v2/viz/9e117f7e-beed-11e5-8311-0ecd1babdde5/viz.json';
+      var layerUrl2 = 'https://masta-g3.cartodb.com/api/v2/viz/5bf7d944-bef2-11e5-99ed-0e674067d321/viz.json';
       var sublayers;
 
       // Add data layer to your map.
-      cartodb.createLayer(map, layerUrl, { legends: false })
-          .addTo(map)
+      cartodb.createLayer(map1, layerUrl1, { legends: false })
+          .addTo(map1)
+          .done(function(layer) {
+            $("li").on('click', function(e) {
+              var num = +$(e.target).attr('data');
+              createSelector(layer,num,$(e.target).hasClass('vio'));
+            });
+          })
+          .error(function(err) {
+              console.log("error: " + err);
+          });
+
+      cartodb.createLayer(map2, layerUrl2, { legends: false })
+          .addTo(map2)
           .done(function(layer) {
             $("li").on('click', function(e) {
               var num = +$(e.target).attr('data');
@@ -62,13 +86,17 @@
           });
       }
 
-
       $( document ).ready(function() {
-          $( "#js-layer-selector" ).click(function() {
+          $( "#js-layer-selector1" ).click(function() {
               $( '.layer_selector' ).toggleClass( "is-active" );
           });
       });
 
+      $( document ).ready(function() {
+          $( "#js-layer-selector2" ).click(function() {
+              $( '.layer_selector' ).toggleClass( "is-active" );
+          });
+      });
   </script>
 </head>
 
@@ -160,10 +188,10 @@
 
     <div id="variables" class="row">
       <h4>Distribution of Variables in Space</h4>
-      <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists. Due to CartoDB licencing restrictions, on this map we are only able to show 4 variables: <em>%College Education, %Black, %Median House Value & Score.</em></p>
-      <div id="cartodb-map"> </div>
-      <div id="cartocss" class="layer_selector">
-        <p id="js-layer-selector">VARIABLE SELECTOR</p>
+      <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists. Due to CartoDB licencing restrictions, on this map we are only able to show 4 variables: <em>%College Education, %Black, %Median House Value & Score.</em> The first map below shows their distribution, with darker colors representing larger values. On the second map we can find a Moran's I cluster analysis, where green regions signal statistically significant positive clusters and red the negative ones.</p>
+      <div id="cartodb-map1"> </div>
+      <div id="cartocss1" class="layer_selector">
+        <p id="js-layer-selector1"><b>VARIABLE SELECTOR</b></p>
         <ul class="LayerSelector-list">
           <li data="0">% College Education</li>
           <li data="1">% Black</li>
@@ -171,7 +199,23 @@
           <li data="3">Score</li>
         </ul>
       </div>
+      </br>
+      <div id="cartodb-map2"> </div>
     </div>
+
+    <!--div id="clusters" class="row">
+      <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists. Due to CartoDB licencing restrictions, on this map we are only able to show 4 variables: <em>%College Education, %Black, %Median House Value & Score.</em></p>
+      <div id="cartodb-map2"> </div>
+      <div id="cartocss2" class="layer_selector">
+        <p id="js-layer-selector2">VARIABLE SELECTOR</p>
+        <ul class="LayerSelector-list">
+          <li data="0">% College Education</li>
+          <li data="1">% Black</li>
+          <li data="2">Median House Value</li>
+          <li data="3">Score</li>
+        </ul>
+      </div>
+    </div-->
 
   <!--div class="section values">
     <div class="container">

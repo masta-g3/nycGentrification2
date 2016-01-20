@@ -32,7 +32,12 @@
 .button-area {
   margin-left: -11rem;
 }
-#cartodb-map {
+#cartodb-map1 {
+  width: 100%;
+  height:100%;
+  background: white;
+}
+#cartodb-map2 {
   width: 100%;
   height:100%;
   background: white;
@@ -50,7 +55,7 @@
     font-size: 11px;
     position: absolute;
     right: 20px;
-    bottom: 350px;
+    bottom: 1100px;
 }
 
 .layer_selector > p {
@@ -81,7 +86,8 @@
     bottom: 10px;
 }
 .layer_selector li.sql_selected,
-.layer_selector li.cartocss_selected {
+.layer_selector li.cartocss1_selected,
+.layer_selector li.cartocss2_selected {
     background-color: #A6CEE3;
 }
 
