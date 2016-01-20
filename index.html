@@ -17,6 +17,7 @@
   <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
 
   <script>
+  // First map.
     window.onload = function() {
 
       var map = new L.Map('cartodb-map', {
@@ -27,6 +28,7 @@
 
       map.doubleClickZoom.disable();
       map.scrollWheelZoom.disable();
+      map.dragging.disable();
 
       // Create layer selector.
       function createSelector(layer,num) {
@@ -43,7 +45,7 @@
       L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
       // For storing sublayer outside of createlayer.
-      var layerUrl = 'https://masta-g3.cartodb.com/api/v2/viz/7afeefee-b9c5-11e5-afb4-0ef24382571b/viz.json';
+      var layerUrl = 'https://masta-g3.cartodb.com/api/v2/viz/9e117f7e-beed-11e5-8311-0ecd1babdde5/viz.json';
       var sublayers;
 
       // Add data layer to your map.
@@ -62,44 +64,11 @@
 
 
       $( document ).ready(function() {
-          $( "#js-crime-selector" ).click(function() {
+          $( "#js-layer-selector" ).click(function() {
               $( '.layer_selector' ).toggleClass( "is-active" );
           });
       });
 
-/*    var layers = [];
-    var map;
-
-    cartodb.createLayer(map_object,'http://team.cartodb.com/api/v2/viz/5a9a49ce-b3a9-11e4-921d-0e9d821ea90d/viz.json')
-                    .addTo(map_object)
-                    .done(function(layer) {
-                      $("li").on('click', function(e) {
-                        var num = +$(e.target).attr('data');
-                        createSelector(layer,num,$(e.target).hasClass('vio'));
-                      });
-                    })
-
-    function init(){
-      // initiate leaflet map
-      map = new L.Map('cartodb-map', {
-        zoomControl: false,
-        center: [40.73,-73.76],
-        zoom: 11
-      })
-
-      map.doubleClickZoom.disable();
-      map.scrollWheelZoom.disable();
-
-      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
-
-      cartodb.createLayer(map, layerUrl)
-        .addTo(map)
-        .on('done', function(layer) {
-          layer.getSubLayer(0).set(subLayerOptions);
-        }).on('error', function() {
-          //log the error
-        });
-    }*/
   </script>
 </head>
 
@@ -189,19 +158,18 @@
       <p>We observe that although in general the proposed relationships hold, the magnitude of the correlations differs across counties. It seems that the relationship is almost negligible in the Bronx county, while the effects are largest on the New York and Kings'. Both the Manhattan and Brooklyn boroughs are contained on these two counties, and are generally regarded by the media as the neighborhoods where gentrification is most prevalent.</p>
     </div>
 
-      <div id="variables" class="row">
-        <h4>Distribution of Variables in Space</h4>
-        <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists.</p>
-        <div id="cartodb-map"> </div>
-        <div id="cartocss" class="layer_selector">
-          <p id="js-layer-selector">VARIABLE SELECTOR</p>
-          <ul class="LayerSelector-list">
-            <li data="0">% College Education</li>
-            <li data="1">% Black</li>
-            <li data="2">Median House Value</li>
-            <li data="3">Score</li>
-          </ul>
-        </div>
+    <div id="variables" class="row">
+      <h4>Distribution of Variables in Space</h4>
+      <p>We will now focus our attention in the specific distribution of the index varibles in space. We are interested in identifying possible clusters that could indicate some sort of spatial autocorrelation, if this exists. Due to CartoDB licencing restrictions, on this map we are only able to show 4 variables: <em>%College Education, %Black, %Median House Value & Score.</em></p>
+      <div id="cartodb-map"> </div>
+      <div id="cartocss" class="layer_selector">
+        <p id="js-layer-selector">VARIABLE SELECTOR</p>
+        <ul class="LayerSelector-list">
+          <li data="0">% College Education</li>
+          <li data="1">% Black</li>
+          <li data="2">Median House Value</li>
+          <li data="3">Score</li>
+        </ul>
       </div>
     </div>
 
